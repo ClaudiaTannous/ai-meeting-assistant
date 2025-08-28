@@ -11,9 +11,6 @@ dist/
 npm-debug.log
 yarn-error.log
 
-# Alembic
-alembic/versions/*.pyc
-
 # OS files
 .DS_Store
 Thumbs.db
