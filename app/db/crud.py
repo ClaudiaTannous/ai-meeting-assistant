@@ -89,3 +89,25 @@ def delete_transcript(db:Session,transcript_id:int):
         db.commit()
         return True
     return False
+
+def create_summary(db: Session , summary:schemas.SummaryCreate,transcript_id:int):
+    db_summary=models.Summary(
+        summary_test=summary.summary_text,
+        created_at=datetime.utcnow(),
+        transcript_id=transcript_id
+    )
+    db.add(db_summary)
+    db.commit()
+    db.refresh(db_summary)
+    return db_summary
+
+def get_summaries_for_transcript(db:Session,transcript_id:int):
+    return db.query(models.Summary).filter(models.Summary.transcript_id==transcript_id).all()
+
+def delete_summary(db:Session ,summary_id:int):
+    db_summary=db.query(models.Summary).filter(models.Summary.id==summary_id).first()
+    if db_summary :
+        db.delete(db_summary)
+        db.commit()
+        return True
+    return False
