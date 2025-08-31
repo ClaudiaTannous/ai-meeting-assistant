@@ -29,3 +29,21 @@ def test_create_summary(client, auth_token):
     global summary_id, saved_transcript_id
     summary_id = data["id"]
     saved_transcript_id = transcript_id
+    
+    
+def test_get_summaries_for_transcript(client, auth_token):
+    headers = {"Authorization": f"Bearer {auth_token}"}
+    response = client.get(f"/summaries/{saved_transcript_id}", headers=headers)
+    assert response.status_code == 200, response.text
+    data = response.json()
+    assert isinstance(data, list)
+    assert any(s["id"] == summary_id for s in data)
+
+def test_delete_summary(client, auth_token):
+    headers = {"Authorization": f"Bearer {auth_token}"}
+    response = client.delete(f"/summaries/{summary_id}", headers=headers)
+    assert response.status_code == 204, response.text
+
+    
+    response = client.get(f"/summaries/{saved_transcript_id}", headers=headers)
+    assert all(s["id"] != summary_id for s in response.json())
