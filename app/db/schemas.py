@@ -1,4 +1,4 @@
-from pydantic import BaseModel,EmailStr
+from pydantic import BaseModel,EmailStr,Field
 from datetime import datetime
 from typing import List,Optional
 
@@ -70,11 +70,11 @@ class SummaryOut(SummaryBase):
         orm_mode=True
         
 class TranscriptWithSummaries(TranscriptOut):
-    summaries:List[SummaryOut]=[]
+    summaries:List[SummaryOut]= Field(default_factory=list)
     
 class MeetingWithTranscript(MeetingOut):
     transcript :Optional[TranscriptWithSummaries] = None
 
 class UserWithMeetings(UserOut):
-    meetings:List[MeetingWithTranscript]=[]
+    meetings:List[MeetingWithTranscript]=Field(default_factory=list)
     
