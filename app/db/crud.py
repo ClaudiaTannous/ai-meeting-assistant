@@ -2,7 +2,7 @@ from sqlalchemy.orm import Session
 from datetime import datetime
 from . import models,schemas
 
-def get_user(db:Session ,user:schemas.UserCreate,hashed_password:str):
+def create_user(db:Session ,user:schemas.UserCreate,hashed_password:str):
     db_user=models.User(
         name=user.name,
         email=user.email,
@@ -53,7 +53,7 @@ def get_meetings_for_user(db:Session,user_id:int):
     return db.query(models.Meeting).filter(models.Meeting.user_id==user_id).all()
 
 def delete_meeting(db:Session , meeting_id:int):
-    db_meeting=db.query(models.Meeting).filter(models.Meeting.id==meeting_id).first
+    db_meeting=db.query(models.Meeting).filter(models.Meeting.id==meeting_id).first()
     if db_meeting:
         db.delete(db_meeting)
         db.commit()
@@ -92,7 +92,7 @@ def delete_transcript(db:Session,transcript_id:int):
 
 def create_summary(db: Session , summary:schemas.SummaryCreate,transcript_id:int):
     db_summary=models.Summary(
-        summary_test=summary.summary_text,
+        summary_text=summary.summary_text,
         created_at=datetime.utcnow(),
         transcript_id=transcript_id
     )
