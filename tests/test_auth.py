@@ -18,23 +18,8 @@ def test_register_user(client):
         assert response.json()["detail"] == "Email already registered"
 
 
-
-@pytest.fixture(scope="module")
-def auth_token(client):
-    response = client.post(
-        "/auth/login",
-        data={"username": "claude@gmail.com", "password": "secret11"},
-    )
-    assert response.status_code == 200, response.text
-    data = response.json()
-    assert "access_token" in data
-    return data["access_token"]
-
-
-
 def test_login_user(auth_token):
     assert isinstance(auth_token, str) and len(auth_token) > 10
-
 
 
 def test_get_current_user(client, auth_token):
@@ -44,7 +29,6 @@ def test_get_current_user(client, auth_token):
     data = response.json()
     assert data["email"] == "claude@gmail.com"
     assert "id" in data
-
 
 
 def test_login_invalid_password(client):

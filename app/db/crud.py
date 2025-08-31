@@ -72,8 +72,8 @@ def create_transcript(db:Session,transcript:schemas.TranscriptCreate,meeting_id:
     db.refresh(db_transcript)
     return db_transcript
 
-def get_transcript(db:Session,transcipt_id:int):
-    return db.query(models.Transcript).filter(models.Transcript.id==transcipt_id).first()
+def get_transcript(db: Session, transcript_id: int):   
+    return db.query(models.Transcript).filter(models.Transcript.id == transcript_id).first()
 
 def get_transcript_with_summaries(db:Session , transcript_id:int):
     return (
