@@ -1,5 +1,5 @@
 from sqlalchemy import Column,Index,Integer,DateTime,ForeignKey,Text,String
-from app.db.session import Base
+from backend.app.db.session import Base
 from datetime import datetime
 from sqlalchemy.orm import relationship
 
@@ -39,6 +39,7 @@ class Summary(Base):
      __tablename__="summaries"
      id = Column(Integer , primary_key=True , index = True , autoincrement=True)
      summary_text = Column(Text , nullable=False)
+     source = Column(String,default="manual")
      created_at = Column(DateTime , default=datetime.utcnow)
      transcript_id = Column(Integer , ForeignKey("transcripts.id"))
      

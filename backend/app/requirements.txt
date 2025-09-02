@@ -9,3 +9,5 @@ flake8
 black
 httpx
 email-validator
+openai>=1.0.0
+

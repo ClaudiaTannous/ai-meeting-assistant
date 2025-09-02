@@ -58,7 +58,7 @@ class SummaryBase(BaseModel):
     summary_text:str
     
 class SummaryCreate(SummaryBase):
-    pass
+    source:str = "manual"
 
 class SummaryOut(SummaryBase):
     
@@ -68,6 +68,9 @@ class SummaryOut(SummaryBase):
     
     class Config :
         orm_mode=True
+        
+class SummaryUpdate(SummaryBase):
+    pass
         
 class TranscriptWithSummaries(TranscriptOut):
     summaries:List[SummaryOut]= Field(default_factory=list)

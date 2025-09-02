@@ -104,6 +104,15 @@ def create_summary(db: Session , summary:schemas.SummaryCreate,transcript_id:int
 def get_summaries_for_transcript(db:Session,transcript_id:int):
     return db.query(models.Summary).filter(models.Summary.transcript_id==transcript_id).all()
 
+def update_summary(db: Session, summary_id: int, new_data: schemas.SummaryUpdate):
+    summary = db.query(models.Summary).filter(models.Summary.id == summary_id).first()
+    if not summary:
+        return None
+    summary.content = new_data.content
+    db.commit()
+    db.refresh(summary)
+    return summary
+
 def delete_summary(db:Session ,summary_id:int):
     db_summary=db.query(models.Summary).filter(models.Summary.id==summary_id).first()
     if db_summary :
