@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import api from "@/lib/api";
+import Cookies from "js-cookie";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -18,14 +19,11 @@ export default function SignupPage() {
     setError("");
 
     try {
-      // Send data to backend
-      const res = await api.post("/auth/signup", { name, email, password });
+      const res = await api.post("/auth/register", { name, email, password });
       const data = res.data as { access_token: string };
 
-      // Save token in localStorage
-      localStorage.setItem("token", data.access_token);
+      Cookies.set("token", data.access_token, { expires: 7 });
 
-      // Redirect to meetings dashboard
       router.push("/meetings");
     } catch (err: any) {
       setError("Signup failed. Email may already be in use.");

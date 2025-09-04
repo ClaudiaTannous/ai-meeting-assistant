@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 from datetime import datetime
 from . import models,schemas
-
+from sqlalchemy.orm import joinedload
 def create_user(db:Session ,user:schemas.UserCreate,hashed_password:str):
     db_user=models.User(
         name=user.name,
@@ -108,7 +108,7 @@ def update_summary(db: Session, summary_id: int, new_data: schemas.SummaryUpdate
     summary = db.query(models.Summary).filter(models.Summary.id == summary_id).first()
     if not summary:
         return None
-    summary.content = new_data.content
+    summary.summary_text = new_data.summary_text
     db.commit()
     db.refresh(summary)
     return summary
@@ -120,3 +120,28 @@ def delete_summary(db:Session ,summary_id:int):
         db.commit()
         return True
     return False
+
+def update_or_create_transcript(db: Session, meeting_id: int, new_content: str):
+   
+    transcript = (
+        db.query(models.Transcript)
+        .filter(models.Transcript.meeting_id == meeting_id)
+        .first()
+    )
+
+    if transcript:
+        transcript.content = new_content
+        transcript.created_at = datetime.utcnow()
+        db.commit()
+        db.refresh(transcript)
+        return transcript
+    else:
+        db_transcript = models.Transcript(
+            content=new_content,
+            created_at=datetime.utcnow(),
+            meeting_id=meeting_id
+        )
+        db.add(db_transcript)
+        db.commit()
+        db.refresh(db_transcript)
+        return db_transcript

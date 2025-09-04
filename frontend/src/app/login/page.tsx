@@ -18,12 +18,22 @@ export default function LoginPage() {
 
     try {
       const res = await api.post("/auth/login", { email, password });
-      const data = res.data as { access_token: string };
-      Cookies.set("token", data.access_token, { expires: 7 });
+      const data = res.data as { access_token: string; token_type: string };
 
+      console.log("Login response:", data);
+
+      // Save token in cookie
+      Cookies.set("token", data.access_token, { expires: 7 });
+      console.log("Saved token:", Cookies.get("token"));
+
+      // Redirect to meetings page
       router.push("/meetings");
     } catch (err: any) {
-      setError("Invalid email or password");
+      if (err.response?.status === 401) {
+        setError("Invalid email or password");
+      } else {
+        setError("Something went wrong. Please try again.");
+      }
     }
   };
 
@@ -32,16 +42,13 @@ export default function LoginPage() {
       <div className="w-full max-w-md bg-white p-8 rounded-xl shadow-md">
         <h1 className="text-2xl font-bold text-center mb-6">Login</h1>
 
-        {/* Error message */}
         {error && (
           <div className="bg-red-100 text-red-600 p-2 rounded mb-4 text-sm">
             {error}
           </div>
         )}
 
-        {/* Login form */}
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Email */}
           <div>
             <label className="block text-sm font-medium text-gray-700">
               Email
@@ -57,7 +64,6 @@ export default function LoginPage() {
             />
           </div>
 
-          {/* Password */}
           <div>
             <label className="block text-sm font-medium text-gray-700">
               Password
@@ -73,7 +79,6 @@ export default function LoginPage() {
             />
           </div>
 
-          {/* Submit */}
           <button
             type="submit"
             className="w-full bg-indigo-600 text-white py-2 rounded-lg 
@@ -83,7 +88,6 @@ export default function LoginPage() {
           </button>
         </form>
 
-        {/* Signup link */}
         <p className="mt-4 text-sm text-center text-gray-500">
           Don&apos;t have an account?{" "}
           <a href="/signup" className="text-indigo-600 hover:underline">

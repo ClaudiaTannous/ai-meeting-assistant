@@ -55,23 +55,28 @@ class TranscriptOut(TranscriptBase):
         
         
 class SummaryBase(BaseModel):
-    summary_text:str
-    
+    summary_text: str
+    source: str 
+
 class SummaryCreate(SummaryBase):
-    source:str = "manual"
+    pass  
 
 class SummaryOut(SummaryBase):
+    id: int
+    created_at: datetime
+    transcript_id: int
+
+    class Config:
+        orm_mode = True
+
+class SummaryUpdate(BaseModel):
+    summary_text: Optional[str] = None
+    source: Optional[str] = None
     
-    id:int
-    created_at:datetime
-    transcript_id:int
-    
-    class Config :
-        orm_mode=True
-        
-class SummaryUpdate(SummaryBase):
-    pass
-        
+class LoginRequest(BaseModel):
+    email: str
+    password: str
+
 class TranscriptWithSummaries(TranscriptOut):
     summaries:List[SummaryOut]= Field(default_factory=list)
     
