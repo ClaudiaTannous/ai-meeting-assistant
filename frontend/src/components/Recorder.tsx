@@ -6,8 +6,8 @@ import AISummary from "./AISummary";
 import Cookies from "js-cookie";
 
 export default function Recorder() {
-  const { id } = useParams(); // ✅ /meetings/[id]
-  const meetingId = Number(id);
+  const params = useParams(); // ✅ get dynamic route params
+  const meetingId = Number(params?.id); // ✅ parse meetingId from /meetings/[id]
 
   const [isRecording, setIsRecording] = useState(false);
   const [isPaused, setIsPaused] = useState(false);

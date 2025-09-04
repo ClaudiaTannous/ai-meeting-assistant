@@ -3,14 +3,40 @@ from sqlalchemy.orm import Session
 from backend.app.db import crud, schemas, models
 from backend.app.db.session import get_db
 from backend.app.api.auth import get_current_user
+from datetime import datetime
 
 router = APIRouter(prefix="/transcripts", tags=["transcripts"])
 
-# ✅ Create or update transcript for a meeting (always one transcript per meeting)
+def update_or_create_transcript(db: Session, meeting_id: int, new_content: str):
+    transcript = (
+        db.query(models.Transcript)
+        .filter(models.Transcript.meeting_id == meeting_id)
+        .first()
+    )
+
+    if transcript:
+        
+        transcript.content = (transcript.content or "") + " " + new_content
+        transcript.created_at = datetime.utcnow()
+        db.commit()
+        db.refresh(transcript)
+        return transcript
+    else:
+        
+        db_transcript = models.Transcript(
+            content=new_content,
+            created_at=datetime.utcnow(),
+            meeting_id=meeting_id
+        )
+        db.add(db_transcript)
+        db.commit()
+        db.refresh(db_transcript)
+        return db_transcript
+
 @router.post("/{meeting_id}", response_model=schemas.TranscriptOut)
 def create_or_update_transcript(
     meeting_id: int,
-    data: dict = Body(...),  # expects { "content": "..." }
+    data: dict = Body(...),  
     db: Session = Depends(get_db),
     current_user: models.User = Depends(get_current_user),
 ):
@@ -21,16 +47,17 @@ def create_or_update_transcript(
             detail="Meeting not found"
         )
 
-    content = data.get("content", "").strip()
-    if not content:
+    new_content = data.get("content", "").strip()
+    if not new_content:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Transcript content cannot be empty"
         )
 
-    # ✅ use CRUD helper to upsert transcript
-    transcript = crud.update_or_create_transcript(db, meeting_id, content)
+    
+    transcript = update_or_create_transcript(db, meeting_id, new_content)
     return transcript
+
 
 
 @router.get("/{transcript_id}", response_model=schemas.TranscriptOut)

@@ -5,6 +5,9 @@ import { useParams } from "next/navigation";
 import api from "@/lib/api";
 import type { Meeting, Transcript, Summary } from "@/types";
 import Recorder from "@/components/Recorder";
+interface RecorderProps {
+  meetingId: number; // 👈 declare meetingId prop
+}
 
 export default function MeetingDetailsPage() {
   const params = useParams();
@@ -78,7 +81,7 @@ export default function MeetingDetailsPage() {
       </div>
 
       {/* Recorder for live transcription */}
-      <Recorder meetingId={meetingId} />
+      <Recorder />
 
       {/* Transcript */}
       {transcript && (
